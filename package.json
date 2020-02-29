@@ -6,10 +6,10 @@
   "bin": "lib/index.js",
   "scripts": {
     "clean": "rimraf ./lib/*",
-    "build": "tsc -p src",
-    "watch": "tsc -p src --watch",
+    "build": "npm run clean && tsc -p src",
+    "watch": "npm run clean && tsc -p src --watch",
     "prepublish": "rimraf ./bin/*",
-    "publish": "npm run clean && npm run build && pkg --out-path ./bin/ --targets linux,win ."
+    "publish": "npm run build && pkg --out-path ./bin/ --targets win-x86,linux --no-bytecode --public --public-packages '*' ."
   },
   "repository": {
     "type": "git",
