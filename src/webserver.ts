@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import fs from "fs";
 import * as HttpStatusCodes from "http-status-codes";
 import path from "path";
@@ -23,15 +23,18 @@ export default class WebServer {
   }
 
   private notFound(req, res, fileName) {
-    this.log(LogType.ERROR, `File ${fileName} not found`);
+    this.log(LogType.ERROR, `File '${fileName}' not found for ${req.ip}`);
 
     return res
       .status(HttpStatusCodes.NOT_FOUND)
       .send({ error: `File not found` });
   }
 
-  private found(req, res, fullPath) {
-    this.log(LogType.INFO, `Serving file ${path.basename(fullPath)}`);
+  private found(req: Request, res: Response, fullPath: string) {
+    this.log(
+      LogType.INFO,
+      `Serving file '${path.basename(fullPath)}' to ${req.ip}`
+    );
 
     return res.status(HttpStatusCodes.OK).sendFile(fullPath);
   }
@@ -57,6 +60,10 @@ export default class WebServer {
         return this.notFound(req, res, fileName);
 
       return this.found(req, res, fullPath);
+    });
+
+    app.get("/*", (req, res) => {
+      return this.notFound(req, res, req.path);
     });
 
     this.app = app;
