@@ -52,7 +52,7 @@ export default class Configurator {
       const [isValid, err] = configVar.isValid(envVar);
 
       console.log(
-        `READ: ${configVar.friendlyName} (${configVar.envName}) = ${envVar}`
+        `READ OK: ${configVar.friendlyName} (${configVar.envName}) = ${envVar}`
       );
 
       if (!isValid) {
