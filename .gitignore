@@ -106,4 +106,4 @@ dist
 lib/
 dts/
 bin/
-tscw_config_example.txt
+tscw_config.txt
