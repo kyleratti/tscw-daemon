@@ -70,7 +70,7 @@ export default class WebServer {
 
     const port = Number(process.env.PORT);
 
-    this.app.listen(port, () => {
+    this.app.listen(port, "0.0.0.0", () => {
       console.log(
         `OK: Listening for HTTP requests on http://${os.hostname()}:${port}/`
       );
