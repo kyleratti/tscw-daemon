@@ -69,11 +69,36 @@ export default class WebServer {
     this.app = app;
 
     const port = Number(process.env.PORT);
+    const fqdnUrl = `http://${os.hostname()}:${port}/`;
 
     this.app.listen(port, "0.0.0.0", () => {
-      console.log(
-        `OK: Listening for HTTP requests on http://${os.hostname()}:${port}/`
-      );
+      console.log(`OK: Listening for HTTP requests at ${fqdnUrl}`);
+
+      const netInterfaces = os.networkInterfaces();
+
+      for (const k in netInterfaces) {
+        if (netInterfaces.hasOwnProperty(k)) {
+          const iface = netInterfaces[k];
+
+          iface.forEach(ifaceDetails => {
+            if (
+              ifaceDetails.family === "IPv4" &&
+              ifaceDetails.address !== "127.0.0.1"
+            )
+              console.log(
+                `\t- Also listening at: http://${ifaceDetails.address}:${port}`
+              );
+          });
+        }
+      }
+
+      console.log(`OK: Ready to serve the following files:`);
+
+      const validFileNames = this.validFileNames;
+
+      validFileNames.forEach(fileName => {
+        console.log(`\t- ${fqdnUrl}${fileName}`);
+      });
     });
   }
 }
