@@ -42,7 +42,8 @@ export default class WebServer {
             ifaceDetails.family === "IPv4" &&
             ifaceDetails.address !== "127.0.0.1"
           )
-            console.log(
+            Logger.log(
+              LogType.INFO,
               `\t- Also listening at: http://${ifaceDetails.address}:${this.port}`
             );
         });
@@ -51,12 +52,12 @@ export default class WebServer {
   };
 
   private printValidFiles = () => {
-    console.log(`OK: Ready to serve the following files:`);
+    Logger.log(LogType.INFO, `OK: Ready to serve the following files:`);
 
     const validFileNames = this.validFileNames;
 
     validFileNames.forEach(fileName => {
-      console.log(`\t- ${this.fqdnUrl}${fileName}`);
+      Logger.log(LogType.INFO, `\t- ${this.fqdnUrl}${fileName}`);
     });
   };
 
@@ -88,7 +89,10 @@ export default class WebServer {
     });
 
     app.listen(this.port, "0.0.0.0", () => {
-      console.log(`OK: Listening for HTTP requests at ${this.fqdnUrl}`);
+      Logger.log(
+        LogType.INFO,
+        `OK: Listening for HTTP requests at ${this.fqdnUrl}`
+      );
 
       this.printNetInterfaces();
       this.printValidFiles();
