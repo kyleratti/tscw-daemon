@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import Logger, { LogType } from "./logger";
+import Logger from "./logger";
 
 dotenv.config({
   path: path.resolve(process.cwd(), `tscw_config.txt`)

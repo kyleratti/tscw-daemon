@@ -3,7 +3,7 @@ import fs from "fs";
 import * as HttpStatusCodes from "http-status-codes";
 import os from "os";
 import path from "path";
-import Logger, { LogType } from "./logger";
+import Logger from "./logger";
 
 export default class WebServer {
   port = Number(process.env.PORT);
