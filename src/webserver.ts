@@ -13,7 +13,7 @@ export default class WebServer {
 
   app: express.Application;
 
-  private fileNotFound(req, res, fileName) {
+  private fileNotFound(req: Request, res: Response, fileName: string) {
     Logger.error(`File '${fileName}' not found for ${req.ip}`);
 
     return res
