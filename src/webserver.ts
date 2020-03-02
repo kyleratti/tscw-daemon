@@ -14,7 +14,7 @@ export default class WebServer {
   app: express.Application;
 
   private fileNotFound(req, res, fileName) {
-    Logger.log(LogType.ERROR, `File '${fileName}' not found for ${req.ip}`);
+    Logger.error(`File '${fileName}' not found for ${req.ip}`);
 
     return res
       .status(HttpStatusCodes.NOT_FOUND)
@@ -22,10 +22,7 @@ export default class WebServer {
   }
 
   private fileFound(req: Request, res: Response, fullPath: string) {
-    Logger.log(
-      LogType.INFO,
-      `Serving file '${path.basename(fullPath)}' to ${req.ip}`
-    );
+    Logger.info(`Serving file '${path.basename(fullPath)}' to ${req.ip}`);
 
     return res.status(HttpStatusCodes.OK).sendFile(fullPath);
   }
@@ -42,8 +39,7 @@ export default class WebServer {
             ifaceDetails.family === "IPv4" &&
             ifaceDetails.address !== "127.0.0.1"
           )
-            Logger.log(
-              LogType.INFO,
+            Logger.info(
               `\t- Also listening at: http://${ifaceDetails.address}:${this.port}`
             );
         });
@@ -52,12 +48,12 @@ export default class WebServer {
   };
 
   private printValidFiles = () => {
-    Logger.log(LogType.INFO, `OK: Ready to serve the following files:`);
+    Logger.info(`OK: Ready to serve the following files:`);
 
     const validFileNames = this.validFileNames;
 
     validFileNames.forEach(fileName => {
-      Logger.log(LogType.INFO, `\t- ${this.fqdnUrl}${fileName}`);
+      Logger.info(`\t- ${this.fqdnUrl}${fileName}`);
     });
   };
 
@@ -89,10 +85,7 @@ export default class WebServer {
     });
 
     app.listen(this.port, "0.0.0.0", () => {
-      Logger.log(
-        LogType.INFO,
-        `OK: Listening for HTTP requests at ${this.fqdnUrl}`
-      );
+      Logger.info(`OK: Listening for HTTP requests at ${this.fqdnUrl}`);
 
       this.printNetInterfaces();
       this.printValidFiles();
