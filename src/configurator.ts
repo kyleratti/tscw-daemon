@@ -52,14 +52,12 @@ export default class Configurator {
       const envVar = process.env[configVar.envName];
       const [isValid, err] = configVar.isValid(envVar);
 
-      Logger.log(
-        LogType.INFO,
+      Logger.info(
         `READ OK: ${configVar.friendlyName} (${configVar.envName}) = ${envVar}`
       );
 
       if (!isValid) {
-        Logger.log(
-          LogType.WARN,
+        Logger.warn(
           `WARN: ${configVar.friendlyName} (${configVar.envName}) failed validation: ${err}`
         );
         hadError = true;
@@ -67,8 +65,7 @@ export default class Configurator {
     });
 
     if (hadError)
-      Logger.log(
-        LogType.WARN,
+      Logger.warn(
         `THERE WERE CONFIGURATION ERRORS ON STARTUP!!! THIS MAY NOT WORK CORRECTLY!!!`
       );
   }
