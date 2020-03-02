@@ -1,43 +1,64 @@
 import express, { Request, Response } from "express";
 import fs from "fs";
 import * as HttpStatusCodes from "http-status-codes";
-import path from "path";
 import os from "os";
-import moment from "moment";
-
-enum LogType {
-  ERROR = "ERROR",
-  INFO = "INFO",
-  WARN = "WARN"
-}
+import path from "path";
+import Logger, { LogType } from "./logger";
 
 export default class WebServer {
+  port = Number(process.env.PORT);
   watchFolder = process.env.TSCW_WATCH_FOLDER;
   validFileNames = process.env.TSCW_VALID_FILES?.replace(" ", "").split(",");
+  fqdnUrl = `http://${os.hostname()}:${this.port}/`;
 
   app: express.Application;
 
-  private log(logType: LogType, str) {
-    const now = moment().format("YYYY-MM-DD HH:mm:ss A");
-    console.log(`[${now}] ${str}`);
-  }
-
-  private notFound(req, res, fileName) {
-    this.log(LogType.ERROR, `File '${fileName}' not found for ${req.ip}`);
+  private fileNotFound(req, res, fileName) {
+    Logger.log(LogType.ERROR, `File '${fileName}' not found for ${req.ip}`);
 
     return res
       .status(HttpStatusCodes.NOT_FOUND)
       .send({ error: `File not found` });
   }
 
-  private found(req: Request, res: Response, fullPath: string) {
-    this.log(
+  private fileFound(req: Request, res: Response, fullPath: string) {
+    Logger.log(
       LogType.INFO,
       `Serving file '${path.basename(fullPath)}' to ${req.ip}`
     );
 
     return res.status(HttpStatusCodes.OK).sendFile(fullPath);
   }
+
+  private printNetInterfaces = () => {
+    const netInterfaces = os.networkInterfaces();
+
+    for (const k in netInterfaces) {
+      if (netInterfaces.hasOwnProperty(k)) {
+        const iface = netInterfaces[k];
+
+        iface.forEach(ifaceDetails => {
+          if (
+            ifaceDetails.family === "IPv4" &&
+            ifaceDetails.address !== "127.0.0.1"
+          )
+            console.log(
+              `\t- Also listening at: http://${ifaceDetails.address}:${this.port}`
+            );
+        });
+      }
+    }
+  };
+
+  private printValidFiles = () => {
+    console.log(`OK: Ready to serve the following files:`);
+
+    const validFileNames = this.validFileNames;
+
+    validFileNames.forEach(fileName => {
+      console.log(`\t- ${this.fqdnUrl}${fileName}`);
+    });
+  };
 
   start() {
     let app = express();
@@ -57,48 +78,22 @@ export default class WebServer {
       const fullPath = path.resolve(this.watchFolder, fileName);
 
       if (!valid || !fs.existsSync(fullPath))
-        return this.notFound(req, res, fileName);
+        return this.fileNotFound(req, res, fileName);
 
-      return this.found(req, res, fullPath);
+      return this.fileFound(req, res, fullPath);
     });
 
     app.get("/*", (req, res) => {
-      return this.notFound(req, res, req.path);
+      return this.fileNotFound(req, res, req.path);
+    });
+
+    app.listen(this.port, "0.0.0.0", () => {
+      console.log(`OK: Listening for HTTP requests at ${this.fqdnUrl}`);
+
+      this.printNetInterfaces();
+      this.printValidFiles();
     });
 
     this.app = app;
-
-    const port = Number(process.env.PORT);
-    const fqdnUrl = `http://${os.hostname()}:${port}/`;
-
-    this.app.listen(port, "0.0.0.0", () => {
-      console.log(`OK: Listening for HTTP requests at ${fqdnUrl}`);
-
-      const netInterfaces = os.networkInterfaces();
-
-      for (const k in netInterfaces) {
-        if (netInterfaces.hasOwnProperty(k)) {
-          const iface = netInterfaces[k];
-
-          iface.forEach(ifaceDetails => {
-            if (
-              ifaceDetails.family === "IPv4" &&
-              ifaceDetails.address !== "127.0.0.1"
-            )
-              console.log(
-                `\t- Also listening at: http://${ifaceDetails.address}:${port}`
-              );
-          });
-        }
-      }
-
-      console.log(`OK: Ready to serve the following files:`);
-
-      const validFileNames = this.validFileNames;
-
-      validFileNames.forEach(fileName => {
-        console.log(`\t- ${fqdnUrl}${fileName}`);
-      });
-    });
   }
 }

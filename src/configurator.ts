@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import Logger, { LogType } from "./logger";
 
 dotenv.config({
   path: path.resolve(process.cwd(), `tscw_config.txt`)
@@ -51,12 +52,14 @@ export default class Configurator {
       const envVar = process.env[configVar.envName];
       const [isValid, err] = configVar.isValid(envVar);
 
-      console.log(
+      Logger.log(
+        LogType.INFO,
         `READ OK: ${configVar.friendlyName} (${configVar.envName}) = ${envVar}`
       );
 
       if (!isValid) {
-        console.warn(
+        Logger.log(
+          LogType.WARN,
           `WARN: ${configVar.friendlyName} (${configVar.envName}) failed validation: ${err}`
         );
         hadError = true;
@@ -64,7 +67,8 @@ export default class Configurator {
     });
 
     if (hadError)
-      console.warn(
+      Logger.log(
+        LogType.WARN,
         `THERE WERE CONFIGURATION ERRORS ON STARTUP!!! THIS MAY NOT WORK CORRECTLY!!!`
       );
   }
