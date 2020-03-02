@@ -15,4 +15,16 @@ export default class Logger {
     else if (logType === LogType.WARN) console.warn(message);
     else if (logType === LogType.ERROR) console.error(message);
   }
+
+  public static info = (str: string) => {
+    Logger.log(LogType.INFO, str);
+  };
+
+  public static warn = (str: string) => {
+    Logger.log(LogType.WARN, str);
+  };
+
+  public static error = (str: string) => {
+    Logger.log(LogType.ERROR, str);
+  };
 }
