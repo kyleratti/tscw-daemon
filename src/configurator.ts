@@ -1,11 +1,5 @@
-import dotenv from "dotenv";
 import fs from "fs";
-import path from "path";
 import Logger from "./logger";
-
-dotenv.config({
-  path: path.resolve(process.cwd(), `tscw_config.txt`)
-});
 
 interface ConfigurationVariable {
   /** The friendly name displayed to users */
@@ -18,26 +12,33 @@ interface ConfigurationVariable {
 
 const variables: ConfigurationVariable[] = [
   {
-    friendlyName: "HTTP Server Port",
-    envName: "PORT",
-    isValid: port => {
-      return [Number(port) > 1024, `Port must be a number and > 1024`];
-    }
-  },
-  {
     friendlyName: "Valid Files",
     envName: "TSCW_VALID_FILES",
     isValid: str => {
-      return [str.length > 4, `Must include valid file names`];
+      return [!str || str.length > 4, `Must include valid file names`];
     }
   },
   {
     friendlyName: "Watch Folder",
     envName: "TSCW_WATCH_FOLDER",
     isValid: path => {
+      if (!path) return [false, `Must be set`];
+
       if (!fs.existsSync(path)) return [false, `Path not found`];
       if (!fs.lstatSync(path).isDirectory())
         return [false, `Path is not a directory`];
+
+      return [true];
+    }
+  },
+  {
+    friendlyName: "Relay Server Address",
+    envName: "TSCW_RELAY_SERVER",
+    isValid: str => {
+      if (!str) return [false, `Must be set`];
+
+      if (str.substring(0, 5) !== "ws://")
+        return [false, `Address must begin with ws://`];
 
       return [true];
     }
@@ -58,15 +59,17 @@ export default class Configurator {
 
       if (!isValid) {
         Logger.warn(
-          `WARN: ${configVar.friendlyName} (${configVar.envName}) failed validation: ${err}`
+          `${configVar.friendlyName} (${configVar.envName}) failed validation: ${err}`
         );
         hadError = true;
       }
     });
 
     if (hadError)
-      Logger.warn(
-        `THERE WERE CONFIGURATION ERRORS ON STARTUP!!! THIS MAY NOT WORK CORRECTLY!!!`
-      );
+      for (let i = 0; i < 5; i++) {
+        Logger.warn(
+          `THERE WERE CONFIGURATION ERRORS ON STARTUP!!! THIS MAY NOT WORK CORRECTLY!!!`
+        );
+      }
   }
 }

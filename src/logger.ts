@@ -1,3 +1,4 @@
+import colors from "colors";
 import moment from "moment";
 
 export enum LogType {
@@ -9,11 +10,13 @@ export enum LogType {
 export default class Logger {
   public static log(logType: LogType, str) {
     const now = moment().format("YYYY-MM-DD HH:mm:ss A");
-    const message = `[${now}] ${logType}: ${str}`;
+    const message = `${now} : ${str}`;
 
-    if (logType === LogType.INFO) console.log(message);
-    else if (logType === LogType.WARN) console.warn(message);
-    else if (logType === LogType.ERROR) console.error(message);
+    if (logType === LogType.INFO) console.log(colors.cyan("INFO  ") + message);
+    else if (logType === LogType.WARN)
+      console.log(colors.yellow("WARN  ") + message);
+    else if (logType === LogType.ERROR)
+      console.log(colors.red("ERROR ") + message);
   }
 
   public static info = (str: string) => {
