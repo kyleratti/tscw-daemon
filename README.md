@@ -19,6 +19,8 @@ We came up with a two piece design to solve the separate network issue; a [relay
 
 Essentially, this application takes a watch/source folder, a list of valid files to serve, and a [tscw-relay](https://github.com/kyleratti/tscw-relay) web socket address. On startup, it connects to the relay server and prepares to serve the files in realtime as HTTP requests are made to the relay server.
 
+For the simplicity of deployment to my sister and her co-workers, and to negate the need to install any software as administrator, `pkg` is used to create self-contained executables for Linux (my development platform) and Windows (the target platform).
+
 # Environment Variables
 
 An example file, `tscw_config_example.txt`, is included. You should rename this to `tscw_config.txt` and place it in the same directory as the executable.
