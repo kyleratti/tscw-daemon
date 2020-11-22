@@ -13,11 +13,11 @@
     "publish": "npm run build && pkg --out-path ./bin/ --targets win-x86,linux --no-bytecode --public --public-packages '*' .",
     "start-dev": "node lib/index.js",
     "prepackage:linux": "npm run build",
-    "package:linux": "pkg lib/index.js -o bin/ttu-slideshow-backend.bin -t node12-linux-x64",
+    "package:linux": "pkg lib/index.js -o bin/ttu-slideshow-backend.bin -t node12-linux-x64 --no-bytecode --public --public-packages '*'",
     "prepackage:macos": "npm run build",
-    "package:macos": "pkg lib/index.js -o bin/ttu-slideshow-backend -t node12-macos-x64",
+    "package:macos": "pkg lib/index.js -o bin/ttu-slideshow-backend -t node12-macos-x64 --no-bytecode --public --public-packages '*'",
     "prepackage:windows": "npm run build",
-    "package:windows": "pkg lib/index.js -o bin/ttu-slideshow-backend.exe -t node12-windows-x86"
+    "package:windows": "pkg lib/index.js -o bin/ttu-slideshow-backend.exe -t node12-windows-x86 --no-bytecode --public --public-packages '*'"
   },
   "repository": {
     "type": "git",
