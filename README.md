@@ -48,7 +48,7 @@ There are several config values required for this application to work.
     "soc.xml",
     "wbb.xml"
   ],
-  "relayServer": "ws://tscw-relay.ratti.me"
+  "relayServer": "ws://myserver.com"
 }
 ```
 
