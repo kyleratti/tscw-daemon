@@ -1,3 +1,0 @@
-TSCW_WATCH_FOLDER=C:\temp\
-TSCW_VALID_FILES=bsb.xml,fb.xml,mbb.xml,sb.xml,soc.xml,wbb.xml
-TSCW_RELAY_SERVER=ws://in.thecloud.com

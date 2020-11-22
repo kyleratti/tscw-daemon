@@ -107,3 +107,4 @@ lib/
 dts/
 bin/
 tscw_config.txt
+config.json

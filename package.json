@@ -23,17 +23,17 @@
   },
   "homepage": "https://github.com/kyleratti/tntech-statcrew-webserver#readme",
   "devDependencies": {
-    "@types/dotenv": "^8.2.0",
-    "@types/node": "^13.7.7",
-    "@types/socket.io-client": "^1.4.32",
+    "@types/node": "^13.13.32",
+    "@types/socket.io-client": "^1.4.34",
     "http-status-codes": "^1.4.0",
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   },
   "dependencies": {
     "colors": "^1.4.0",
-    "dotenv": "^8.2.0",
-    "moment": "^2.24.0",
+    "fs": "0.0.1-security",
+    "moment": "^2.29.1",
+    "path": "^0.12.7",
     "socket.io": "^2.3.0"
   }
 }

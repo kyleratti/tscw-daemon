@@ -1,15 +1,10 @@
-import dotenv from "dotenv";
-import path from "path";
-import Configurator from "./configurator";
+import { Config } from "./config";
 import Daemon from "./daemon";
 
-dotenv.config({
-  path: path.resolve(process.cwd(), `tscw_config.txt`)
-});
+export const config = new Config();
+config.load();
 
 const run = () => {
-  Configurator.validate();
-
   const server = new Daemon();
   server.start();
 };

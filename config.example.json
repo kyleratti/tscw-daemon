@@ -1,0 +1,12 @@
+{
+  "watchDir": "C:\\temp\\",
+  "validFiles": [
+    "bsb.xml",
+    "fb.xml",
+    "mbb.xml",
+    "sb.xml",
+    "soc.xml",
+    "wbb.xml"
+  ],
+  "relayServer": "ws://myserver.com"
+}

@@ -2,23 +2,18 @@ import colors from "colors";
 import fs from "fs";
 import path from "path";
 import socketIo from "socket.io-client";
+import { config } from ".";
 import Logger from "./logger";
 import { RelayRequest, RelayResponse } from "./structs";
 
 export default class Daemon {
-  relayServer = process.env.TSCW_RELAY_SERVER;
-  watchFolder = process.env.TSCW_WATCH_FOLDER;
-  validFileNames = process.env.TSCW_VALID_FILES?.replace(" ", "").split(",");
-
   private socket: SocketIOClient.Socket;
 
   private printValidFiles = () => {
     Logger.info(`Ready to serve the following files:`);
 
-    const validFileNames = this.validFileNames;
-
-    validFileNames.forEach(fileName => {
-      const fullPath = path.resolve(this.watchFolder, fileName);
+    config.validFiles.forEach((fileName) => {
+      const fullPath = path.resolve(config.watchDir, fileName);
       const exists = fs.existsSync(fullPath)
         ? colors.green("found")
         : colors.red("not found");
@@ -40,22 +35,22 @@ export default class Daemon {
   start() {
     this.printValidFiles();
 
-    Logger.info(`Using relay server: ${this.relayServer}`);
+    Logger.info(`Using relay server: ${config.relayServer}`);
 
-    this.socket = socketIo(this.relayServer, { reconnectionDelay: 1000 * 5 });
+    this.socket = socketIo(config.relayServer, { reconnectionDelay: 1000 * 5 });
     this.socket.on("relayRequest", (req: RelayRequest) => {
       const [requestId, fileName] = [req.requestId, req.fileName];
       let valid = false;
 
-      for (let i = 0; i < this.validFileNames.length; i++) {
-        const validName = this.validFileNames[i];
+      for (let i = 0; i < config.validFiles.length; i++) {
+        const validName = config.validFiles[i];
         if (validName === fileName) {
           valid = true;
           break;
         }
       }
 
-      const fullPath = path.resolve(this.watchFolder, fileName);
+      const fullPath = path.resolve(config.watchDir, fileName);
 
       if (!valid || !fs.existsSync(fullPath))
         return this.respondFail(`File "${fileName}" not found`);
@@ -65,7 +60,7 @@ export default class Daemon {
       this.respondSuccess({
         requestId: requestId,
         fileName: fileName,
-        data: xmlData
+        data: xmlData,
       });
     });
 
@@ -77,7 +72,7 @@ export default class Daemon {
       Logger.info(`Connected to relay server!`);
     });
 
-    this.socket.on("error", err => {
+    this.socket.on("error", (err) => {
       Logger.error(err);
     });
 
