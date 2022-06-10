@@ -38,7 +38,7 @@
     "http-status-codes": "^1.4.0",
     "pkg": "^4.4.9",
     "rimraf": "^3.0.2",
-    "semantic-release": "^17.2.4",
+    "semantic-release": "^19.0.3",
     "typescript": "^3.9.7"
   },
   "dependencies": {
